@@ -77,18 +77,18 @@ def get_sex(sample, Nx, Na, Lx, La):
     else:
         Elx = Elx_XX
 
-    Rx = Rx/Elx
-    Rx_CI = [Rx_CI[0]/Elx, Rx_CI[1]/Elx]
+    Mx = Rx/Elx
+    Mx_CI = [Rx_CI[0]/Elx, Rx_CI[1]/Elx]
 
-    if Rx < 0.4 or Rx > 1.2:
-        #print("Warning: {} has unexpected Rx={:g}".format(sample, Rx), file=sys.stderr)
+    if Mx < 0.4 or Mx > 1.2:
+        #print("Warning: {} has unexpected Mx={:g}".format(sample, Mx), file=sys.stderr)
         pass
 
-    if Rx > 0.6 and Rx < 0.8:
+    if Mx > 0.6 and Mx < 0.8:
         # suspicious sample, may be contaminated
         sex = 'U'
 
-    return Elx, Rx, Rx_CI, sex
+    return Elx, Mx, Mx_CI, sex
 
 def parse_multi(fn_list, chrX, min_length, min_reads, exclude_contigs, include_contigs):
     xset = set(chrX)
@@ -126,10 +126,10 @@ def parse_multi(fn_list, chrX, min_length, min_reads, exclude_contigs, include_c
             #print("{} has {} reads, ignoring".format(sample, Nx+Na), file=sys.stderr)
             continue
 
-        Elx, Rx, Rx_CI, sex = get_sex(sample, Nx, Na, Lx, La)
+        Elx, Mx, Mx_CI, sex = get_sex(sample, Nx, Na, Lx, La)
         M.append([(float(n)/Nt)/(float(L[s])/Lt) for s,n in N.iteritems()])
 
-        datum = (sample, Nx, Na, Lx, La, Rx, Rx_CI, sex, Elx)
+        datum = (sample, Nx, Na, Lx, La, Mx, Mx_CI, sex, Elx)
         data.append(datum)
 
     return data, np.array(M)
@@ -157,8 +157,8 @@ def parse_pecnerova_csv(fn):
             # length of chrX, length of autosome, from LoxAfr4
             Lx, La = 120050768, 3050898245
 
-            Elx, Rx, Rx_CI, sex = get_sex(sample, Nx, Na, Lx, La)
-            datum = (sample, Nx, Na, Lx, La, Rx, Rx_CI, sex, Elx)
+            Elx, Mx, Mx_CI, sex = get_sex(sample, Nx, Na, Lx, La)
+            datum = (sample, Nx, Na, Lx, La, Mx, Mx_CI, sex, Elx)
             data.append(datum)
     return data
 
@@ -235,13 +235,13 @@ def plot_samples(ax, data, colour="black"):
     samples = map(operator.itemgetter(0), data)
     Nx = np.array(map(operator.itemgetter(1), data), dtype=int)
     Na = np.array(map(operator.itemgetter(2), data), dtype=int)
-    Rx = np.array(map(operator.itemgetter(5), data), dtype=float)
-    Rx_CI = map(operator.itemgetter(6), data)
+    Mx = np.array(map(operator.itemgetter(5), data), dtype=float)
+    Mx_CI = map(operator.itemgetter(6), data)
     sex = map(operator.itemgetter(7), data)
     Elx = np.array(map(operator.itemgetter(8), data), dtype=float)
 
-    Rx_m = [x for x,sx in zip(Rx,sex) if sx=='M']
-    Rx_f = [x for x,sx in zip(Rx,sex) if sx=='F']
+    Rx_m = [x for x,sx in zip(Mx,sex) if sx=='M']
+    Rx_f = [x for x,sx in zip(Mx,sex) if sx=='F']
 
     ax.vlines(0.5, -2, len(samples), linestyle=':')
     ax.vlines(1.0, -2, len(samples), linestyle=':')
@@ -269,11 +269,11 @@ def plot_samples(ax, data, colour="black"):
     sex_colour = {'M': "red", 'F': "blue", 'U': 'black'}
     ecol = [sex_colour[sx] for sx in sex]
 
-    ax.scatter(Rx, y_pos, facecolor=ecol, edgecolors=colour, lw=0.5, s=60)
+    ax.scatter(Mx, y_pos, facecolor=ecol, edgecolors=colour, lw=0.5, s=60)
 
-    err_low = Rx - np.array(map(operator.itemgetter(0), Rx_CI))
-    err_high = np.array(map(operator.itemgetter(1), Rx_CI)) - Rx
-    ax.errorbar(Rx, y_pos, xerr=[err_low, err_high], ecolor=colour, marker="none", fmt="none", capsize=0)
+    err_low = Mx - np.array(map(operator.itemgetter(0), Mx_CI))
+    err_high = np.array(map(operator.itemgetter(1), Mx_CI)) - Mx
+    ax.errorbar(Mx, y_pos, xerr=[err_low, err_high], ecolor=colour, marker="none", fmt="none", capsize=0)
 
     ax.set_ylim([-0.5, len(samples)-0.5])
     ax.set_xlim([0, 1.5])
@@ -382,8 +382,8 @@ if __name__ == "__main__":
 
     pdf.close()
 
-    print("sample", "Rx", "sex", "Nx", "Na", "Lx", "La", sep="\t")
+    print("sample", "Mx", "sex", "Nx", "Na", "Lx", "La", sep="\t")
     for row in sorted(data, key=get_id):
-        (sample, Nx, Na, Lx, La, Rx, Rx_CI, sex, Elx) = row
-        print(sample, Rx, sex, Nx, Na, Lx, La, sep="\t")
+        (sample, Nx, Na, Lx, La, Mx, Mx_CI, sex, Elx) = row
+        print(sample, Mx, sex, Nx, Na, Lx, La, sep="\t")
 
