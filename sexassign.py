@@ -358,13 +358,14 @@ if __name__ == "__main__":
         height = len(data)/15
     else:
         height = 1
+    width = 2
 
     pdf = PdfPages(args.opdf)
     if args.wide:
         fig_w, fig_h = plt.figaspect(9.0/16.0)
     else:
         fig_w, fig_h = plt.figaspect(3.0/4.0)
-    fig1 = plt.figure(figsize=(fig_w, height*fig_h))
+    fig1 = plt.figure(figsize=(width*fig_w, height*fig_h))
     gs1 = gridspec.GridSpec(1+height, 1)
 
     ax1 = fig1.add_subplot(gs1[0:])
