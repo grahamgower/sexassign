@@ -349,6 +349,11 @@ if __name__ == "__main__":
 
     data.sort(key=lambda(x): LooseVersion(get_id(x)), reverse=True)
 
+    print("sample", "Mx", "sex", "Nx", "Na", "Lx", "La", sep="\t")
+    for row in sorted(data, key=get_id):
+        (sample, Nx, Na, Lx, La, Mx, Mx_CI, sex, Elx) = row
+        print(sample, Mx, sex, Nx, Na, Lx, La, sep="\t")
+
     if len(data) > 25:
         height = len(data)/15
     else:
@@ -381,9 +386,4 @@ if __name__ == "__main__":
         pdf.savefig(figure=fig2)
 
     pdf.close()
-
-    print("sample", "Mx", "sex", "Nx", "Na", "Lx", "La", sep="\t")
-    for row in sorted(data, key=get_id):
-        (sample, Nx, Na, Lx, La, Mx, Mx_CI, sex, Elx) = row
-        print(sample, Mx, sex, Nx, Na, Lx, La, sep="\t")
 
