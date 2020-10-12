@@ -8,7 +8,7 @@ to distinguish between the two models.  This is effective with as few as
 5000 mapped shotgun reads.
 
 # Prerequisites
-The `sexassign.py` script requires python 2.7, numpy, scipy, and matplotlib.
+The `sexassign.py` script requires python, numpy, scipy, and matplotlib.
 
 # Usage
 Read counts must first be extracted from mapped BAM files using
@@ -52,3 +52,7 @@ optional arguments:
                         specified, defaults to all contigs
   -p, --pca             Plot PCA of read dosages
 ```
+
+# Citation
+If you find this script useful, please cite:
+Gower et al. (2019), https://doi.org/10.1073/pnas.1903275116

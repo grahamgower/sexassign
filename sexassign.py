@@ -82,7 +82,7 @@ def get_sex(sample, Nx, Na, Lx, La):
 
     if Mx < 0.4 or Mx > 1.2:
         #print("Warning: {} has unexpected Mx={:g}".format(sample, Mx), file=sys.stderr)
-        pass
+        sex = 'U'
 
     if Mx > 0.6 and Mx < 0.8:
         # suspicious sample, may be contaminated
@@ -127,7 +127,7 @@ def parse_multi(fn_list, chrX, min_length, min_reads, exclude_contigs, include_c
             continue
 
         Elx, Mx, Mx_CI, sex = get_sex(sample, Nx, Na, Lx, La)
-        M.append([(float(n)/Nt)/(float(L[s])/Lt) for s,n in N.iteritems()])
+        M.append([(float(n)/Nt)/(float(L[s])/Lt) for s,n in N.items()])
 
         datum = (sample, Nx, Na, Lx, La, Mx, Mx_CI, sex, Elx)
         data.append(datum)
@@ -232,13 +232,13 @@ def plot_PCA(ax, data, M):
 
 def plot_samples(ax, data, colour="black"):
 
-    samples = map(operator.itemgetter(0), data)
-    Nx = np.array(map(operator.itemgetter(1), data), dtype=int)
-    Na = np.array(map(operator.itemgetter(2), data), dtype=int)
-    Mx = np.array(map(operator.itemgetter(5), data), dtype=float)
-    Mx_CI = map(operator.itemgetter(6), data)
-    sex = map(operator.itemgetter(7), data)
-    Elx = np.array(map(operator.itemgetter(8), data), dtype=float)
+    samples = list(map(operator.itemgetter(0), data))
+    Nx = np.array(list(map(operator.itemgetter(1), data)), dtype=int)
+    Na = np.array(list(map(operator.itemgetter(2), data)), dtype=int)
+    Mx = np.array(list(map(operator.itemgetter(5), data)), dtype=float)
+    Mx_CI = list(map(operator.itemgetter(6), data))
+    sex = list(map(operator.itemgetter(7), data))
+    Elx = np.array(list(map(operator.itemgetter(8), data)), dtype=float)
 
     Rx_m = [x for x,sx in zip(Mx,sex) if sx=='M']
     Rx_f = [x for x,sx in zip(Mx,sex) if sx=='F']
@@ -271,8 +271,8 @@ def plot_samples(ax, data, colour="black"):
 
     ax.scatter(Mx, y_pos, facecolor=ecol, edgecolors=colour, lw=0.5, s=60)
 
-    err_low = Mx - np.array(map(operator.itemgetter(0), Mx_CI))
-    err_high = np.array(map(operator.itemgetter(1), Mx_CI)) - Mx
+    err_low = Mx - np.array(list(map(operator.itemgetter(0), Mx_CI)))
+    err_high = np.array(list(map(operator.itemgetter(1), Mx_CI))) - Mx
     ax.errorbar(Mx, y_pos, xerr=[err_low, err_high], ecolor=colour, marker="none", fmt="none", capsize=0)
 
     ax.set_ylim([-0.5, len(samples)-0.5])
@@ -366,7 +366,7 @@ if __name__ == "__main__":
     else:
         fig_w, fig_h = plt.figaspect(3.0/4.0)
     fig1 = plt.figure(figsize=(width*fig_w, height*fig_h))
-    gs1 = gridspec.GridSpec(1+height, 1)
+    gs1 = gridspec.GridSpec(1+int(height), 1)
 
     ax1 = fig1.add_subplot(gs1[0:])
     plot_samples(ax1, data)
