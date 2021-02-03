@@ -18,7 +18,6 @@ import os
 import sys
 import operator
 import csv
-from distutils.version import LooseVersion
 
 import matplotlib
 matplotlib.use('Agg') # don't try to use $DISPLAY
@@ -347,7 +346,7 @@ if __name__ == "__main__":
     else:
         data, M = parse_multi(args.infiles, args.chrX, args.min_length, args.min_reads, args.exclude_contigs, args.include_contigs)
 
-    data.sort(key=lambda x: LooseVersion(get_id(x)), reverse=True)
+    data.sort(key=get_id, reverse=True)
 
     print("sample", "Mx", "sex", "Nx", "Na", "Lx", "La", sep="\t")
     for row in sorted(data, key=get_id):
